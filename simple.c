@@ -2,6 +2,7 @@
 #include <linux/kernel.h>
 #include <linux/module.h>
 #include <linux/list.h>
+#include <slab.h>
 
 struct birthday {
 	int day;
@@ -14,7 +15,27 @@ struct birthday {
 int simple_init(void)
 {
 	printk(KERN_INFO "Loading Module\n");
+	
+	// Define and initialize birthday_list
+	static LIST_HEAD(birthday_list); 
 
+	int init_day = 1;
+	int init_month = 1;
+	int init_year = 1900;
+
+	// Initialize & add five birthday structs
+	for (int i = 0; i < 5; ++i){
+		struct birthday *person;
+
+		person = kmalloc(sizeof(*person), GFP_KERNEL);
+		person->day = init_day * i;
+		person->month = init_month + i;
+		person->year = init_year + i;
+		INIT_LIST_HEAD(&person->list); //Initialize list member
+
+		// Add new struct to list
+		list_add_tail(&person->list, &birthday_list);
+	}
 	return 0;
 }
 
