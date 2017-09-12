@@ -2,7 +2,7 @@
 #include <linux/kernel.h>
 #include <linux/module.h>
 #include <linux/list.h>
-#include <slab.h>
+#include <linux/slab.h>
 
 struct birthday {
 	int day;
@@ -14,17 +14,20 @@ struct birthday {
 /* The initial calling function */
 int simple_init(void)
 {
-	printk(KERN_INFO "Loading Module\n");
-	
-	// Define and initialize birthday_list
-	static LIST_HEAD(birthday_list); 
-
+	static LIST_HEAD(birthday_list); 	
 	int init_day = 1;
 	int init_month = 1;
 	int init_year = 1900;
+	int i;
+	struct birthday *ptr;
+
+	printk(KERN_INFO "Loading Module\n");
+	
+	// Define and initialize birthday_list
+
 
 	// Initialize & add five birthday structs
-	for (int i = 0; i < 5; ++i){
+	for (i = 0; i < 5; ++i){
 		struct birthday *person;
 
 		person = kmalloc(sizeof(*person), GFP_KERNEL);
@@ -35,6 +38,11 @@ int simple_init(void)
 
 		// Add new struct to list
 		list_add_tail(&person->list, &birthday_list);
+	}
+
+	// Traverse the linked list
+	list_for_each_entry(ptr, &birthday_list, list){
+		printk(KERN_INFO "day = %d, month = %d, year = %d\n ", ptr->day, ptr->month, ptr->year);
 	}
 	return 0;
 }
