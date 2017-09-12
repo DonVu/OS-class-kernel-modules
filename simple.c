@@ -11,6 +11,7 @@ struct birthday {
 	struct list_head list; /* kernel's list structure */
 };
 
+	// Define and initialize birthday_list
 	static LIST_HEAD(birthday_list); 	
 
 /* The initial calling function */
@@ -22,10 +23,7 @@ int simple_init(void)
 	int i;
 	struct birthday *ptr;
 
-	printk(KERN_INFO "Loading Module\n");
-	
-	// Define and initialize birthday_list
-
+	printk(KERN_INFO "Loading Module\n");	
 
 	// Initialize & add five birthday structs
 	for (i = 0; i < 5; ++i){
@@ -59,6 +57,7 @@ void simple_exit(void)
 		list_del(&ptr->list);
 		kfree(ptr);	
 	}
+
 	printk(KERN_INFO "Removing Module\n");
 }
 
