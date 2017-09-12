@@ -11,10 +11,11 @@ struct birthday {
 	struct list_head list; /* kernel's list structure */
 };
 
+	static LIST_HEAD(birthday_list); 	
+
 /* The initial calling function */
 int simple_init(void)
 {
-	static LIST_HEAD(birthday_list); 	
 	int init_day = 1;
 	int init_month = 1;
 	int init_year = 1900;
@@ -50,6 +51,14 @@ int simple_init(void)
 /* This function is called when the module is removed. */
 void simple_exit(void)
 {
+	struct birthday *ptr, *next;
+	
+	// Delete the list and free memory
+	list_for_each_entry_safe(ptr, next, &birthday_list, list) {
+		printk(KERN_INFO "Removing list item\n");
+		list_del(&ptr->list);
+		kfree(ptr);	
+	}
 	printk(KERN_INFO "Removing Module\n");
 }
 
